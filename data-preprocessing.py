@@ -18,7 +18,7 @@ mytool = "electric_screwdriver"
 firstTimeStamp = np.Inf
 
 mdr = MeasurementDataReader(source="tool-tracking-data")
-data_dict = mdr.filter_by(Tool == mytool, DataTypes == [ACC, GYR, MIC, MAG]).get()
+data_dict = mdr.query(query_type=Measurement).filter_by(Tool == mytool, DataTypes == [ACC, GYR, MIC, MAG]).get()
 
 measurement_campaign = "01"
 acc = pd.DataFrame(data_dict.get(measurement_campaign).acc)
@@ -45,7 +45,9 @@ def combine_sensors(reference_data, others, firstTimeStamp=np.Inf):
     del res["label_x"]
     del res["label_y"]
     res = res.loc[res['label'] != -1]
-    # res = res.loc[res['label'] != 8]
+
+    res = res.loc[res['label'] != 8] # Comment out if you want "undefined" as a class
+
     res["time"] = res["time"] - firstTimeStamp
     return res, firstTimeStamp
 
